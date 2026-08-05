@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top10 Security — Consultoria e Defesa Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #05070d;
+    --bg-2: #070b14;
+    --panel: #0b101c;
+    --panel-2: #0f1626;
+    --line: rgba(140,165,220,0.14);
+    --line-strong: rgba(140,165,220,0.28);
+    --ink: #e9edf6;
+    --ink-dim: #9aa6bd;
+    --ink-faint: #5c6883;
+    --accent: #3f7dff;
+    --accent-2: #8fc4ff;
+    --accent-soft: rgba(63,125,255,0.12);
+    --crit: #ff5d6c;
+    --warn: #ffb648;
+    --ok: #4fd1a5;
+    --radius: 10px;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  *{margin:0; padding:0; box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  button{font-family:inherit; cursor:pointer;}
+  img,svg{display:block;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+
+  ::selection{background: var(--accent); color:#fff;}
+  :focus-visible{outline:2px solid var(--accent-2); outline-offset:3px;}
+
+  /* ---------- BACKGROUND TEXTURE ---------- */
+  .bg-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse 900px 600px at 50% 0%, #000 0%, transparent 70%);
+            mask-image: radial-gradient(ellipse 900px 600px at 50% 0%, #000 0%, transparent 70%);
+    opacity:0.6;
+  }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:fixed; top:16px; left:0; right:0; z-index:100;
+    display:flex; justify-content:center;
+  }
+  .nav-inner{
+    width:min(1180px, calc(100% - 32px));
+    display:flex; align-items:center; justify-content:space-between;
+    background: rgba(9,13,22,0.72);
+    backdrop-filter: blur(14px);
+    border:1px solid var(--line);
+    border-radius: 12px;
+    padding:12px 14px 12px 18px;
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:17px; letter-spacing:0.2px;}
+  .brand-mark{
+    width:30px; height:30px; border-radius:7px;
+    background: linear-gradient(155deg, var(--accent) 0%, #1c3f8f 100%);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-mark svg{width:16px; height:16px;}
+  .brand-sec{color:var(--accent-2); font-weight:500;}
+  .nav-links{display:flex; align-items:center; gap:30px;}
+  .nav-links a{
+    font-size:14px; color:var(--ink-dim); font-weight:500;
+    transition: color 0.2s ease;
+  }
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{
+    display:flex; align-items:center; gap:8px;
+    background: var(--ink); color:#0a0e18;
+    font-size:13.5px; font-weight:600;
+    padding:10px 16px; border-radius:8px;
+    border:none;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+  .nav-cta:hover{background:#fff; transform:translateY(-1px);}
+  .nav-toggle{display:none; background:none; border:none; color:var(--ink); padding:6px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative; z-index:1;
+    padding:170px 0 110px;
+    overflow:hidden;
+  }
+  .radar{
+    position:absolute; top:-320px; left:50%; transform:translateX(-50%);
+    width:900px; height:900px; z-index:0; pointer-events:none;
+    border-radius:50%;
+    background: conic-gradient(from 0deg, transparent 0deg, var(--accent-soft) 18deg, transparent 60deg);
+    animation: spin 7s linear infinite;
+    opacity:0.9;
+  }
+  .radar::before{
+    content:''; position:absolute; inset:0; border-radius:50%;
+    background: radial-gradient(circle at 50% 35%, rgba(63,125,255,0.10) 0%, transparent 55%);
+  }
+  @keyframes spin{ to{ transform:translateX(-50%) rotate(360deg); } }
+  .radar-rings{
+    position:absolute; top:-260px; left:50%; transform:translateX(-50%);
+    width:820px; height:820px; z-index:0; pointer-events:none;
+  }
+  .radar-rings span{
+    position:absolute; inset:0; margin:auto; border-radius:50%;
+    border:1px solid var(--line);
+  }
+  .radar-rings span:nth-child(1){width:820px; height:820px;}
+  .radar-rings span:nth-child(2){width:600px; height:600px;}
+  .radar-rings span:nth-child(3){width:380px; height:380px;}
+
+  .hero-grid{
+    position:relative; z-index:2;
+    display:grid; grid-template-columns: 1.05fr 0.85fr; gap:56px; align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:9px;
+    font-family: var(--mono); font-size:12px; letter-spacing:1.5px;
+    color: var(--accent-2); text-transform:uppercase;
+    padding:7px 12px; border:1px solid var(--line-strong); border-radius:100px;
+    background: rgba(63,125,255,0.06);
+    margin-bottom:26px;
+  }
+  .eyebrow-dot{width:6px; height:6px; border-radius:50%; background: var(--ok); box-shadow:0 0 0 3px rgba(79,209,165,0.18); flex-shrink:0;}
+
+  .hero h1{
+    font-family: var(--display);
+    font-weight:700;
+    font-size: clamp(40px, 5.4vw, 68px);
+    line-height:1.04;
+    letter-spacing:-0.5px;
+    color:#f4f6fb;
+  }
+  .hero h1 .accent-line{
+    display:block;
+    font-family: var(--mono);
+    font-style:italic;
+    font-weight:400;
+    color: var(--accent-2);
+    font-size:0.62em;
+    margin-top:10px;
+    letter-spacing:0;
+  }
+  .hero p.lead{
+    margin-top:26px; max-width:480px;
+    color: var(--ink-dim); font-size:16.5px; line-height:1.65;
+  }
+  .hero-ctas{display:flex; flex-wrap:wrap; gap:14px; margin-top:38px;}
+  .btn{
+    display:inline-flex; align-items:center; gap:9px;
+    padding:14px 22px; border-radius:9px; font-size:14.5px; font-weight:600;
+    border:1px solid transparent; transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  }
+  .btn-primary{background: var(--accent); color:#fff;}
+  .btn-primary:hover{background:#5b90ff; transform:translateY(-1px);}
+  .btn-ghost{border-color: var(--line-strong); color: var(--ink);}
+  .btn-ghost:hover{border-color: var(--accent-2); background: rgba(63,125,255,0.06);}
+
+  /* ---------- LIVE FEED PANEL ---------- */
+  .feed-panel{
+    background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+    border:1px solid var(--line-strong);
+    border-radius: 14px;
+    overflow:hidden;
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.7);
+  }
+  .feed-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px; border-bottom:1px solid var(--line);
+  }
+  .feed-head-left{display:flex; align-items:center; gap:10px;}
+  .feed-dots{display:flex; gap:6px;}
+  .feed-dots span{width:8px; height:8px; border-radius:50%; background:var(--ink-faint);}
+  .feed-title{font-family:var(--mono); font-size:12px; color:var(--ink-dim); letter-spacing:0.5px;}
+  .feed-live{
+    display:flex; align-items:center; gap:6px;
+    font-family:var(--mono); font-size:11px; color:var(--ok); letter-spacing:0.5px;
+  }
+  .feed-live .dot{width:6px; height:6px; border-radius:50%; background:var(--ok); animation: pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+
+  .feed-body{
+    height:340px; padding:14px 16px; overflow:hidden; position:relative;
+    font-family: var(--mono); font-size:12.5px;
+  }
+  .feed-body::after{
+    content:''; position:absolute; left:0; right:0; bottom:0; height:60px;
+    background: linear-gradient(180deg, transparent, var(--panel-2));
+    pointer-events:none;
+  }
+  .feed-line{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:8px 0; border-bottom:1px dashed var(--line);
+    animation: fadein 0.4s ease;
+    opacity:0;
+    animation-fill-mode:forwards;
+  }
+  @keyframes fadein{ from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);} }
+  .feed-time{color:var(--ink-faint); flex-shrink:0;}
+  .feed-msg{color:var(--ink-dim); flex:1;}
+  .feed-tag{
+    flex-shrink:0; font-size:10.5px; padding:2px 7px; border-radius:5px; font-weight:600; letter-spacing:0.4px;
+    height:fit-content;
+  }
+  .tag-baixa{color:var(--ok); background:rgba(79,209,165,0.12);}
+  .tag-media{color:var(--warn); background:rgba(255,182,72,0.12);}
+  .tag-alta{color:var(--crit); background:rgba(255,93,108,0.12);}
+  .feed-foot{
+    padding:12px 16px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:11px; color:var(--ink-faint);
+    display:flex; justify-content:space-between;
+  }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{position:relative; z-index:1;}
+  .section-pad{padding:120px 0;}
+  .section-head{max-width:640px; margin-bottom:64px;}
+  .section-tag{
+    font-family:var(--mono); font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--accent-2); margin-bottom:16px; display:block;
+  }
+  .section-head h2{
+    font-family:var(--display); font-weight:700; font-size:clamp(28px,3.2vw,40px);
+    letter-spacing:-0.3px; color:#f4f6fb; line-height:1.15;
+  }
+  .section-head p{margin-top:16px; color:var(--ink-dim); font-size:16px; max-width:520px;}
+
+  /* ---------- SERVICES ---------- */
+  .services-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:16px; overflow:hidden;}
+  .service-card{background:var(--panel); padding:34px 30px; transition: background 0.2s ease;}
+  .service-card:hover{background:var(--panel-2);}
+  .service-icon{
+    width:42px; height:42px; border-radius:9px;
+    background: var(--accent-soft); border:1px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; margin-bottom:22px;
+  }
+  .service-icon svg{width:20px; height:20px; stroke:var(--accent-2); fill:none; stroke-width:1.6;}
+  .service-card h3{font-family:var(--display); font-size:17.5px; font-weight:600; margin-bottom:10px; color:#eef1f9;}
+  .service-card p{color:var(--ink-dim); font-size:14.5px; line-height:1.6;}
+
+  /* ---------- METHOD ---------- */
+  .method-list{border-top:1px solid var(--line);}
+  .method-item{
+    display:grid; grid-template-columns:100px 1fr; gap:36px;
+    padding:34px 0; border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .method-num{font-family:var(--mono); color:var(--accent-2); font-size:14px; padding-top:4px;}
+  .method-content h3{font-family:var(--display); font-size:20px; font-weight:600; margin-bottom:10px; color:#eef1f9;}
+  .method-content p{color:var(--ink-dim); font-size:15px; max-width:620px; line-height:1.65;}
+
+  /* ---------- ABOUT ---------- */
+  .about{
+    display:grid; grid-template-columns:0.9fr 1.1fr; gap:70px; align-items:start;
+  }
+  .about-lead{
+    font-family:var(--display); font-weight:600; font-size:26px; line-height:1.4;
+    color:#eef1f9;
+  }
+  .about-lead em{font-style:italic; color:var(--accent-2); font-weight:400; font-family:var(--mono);}
+  .about-details p{color:var(--ink-dim); font-size:15.5px; line-height:1.75; margin-bottom:20px;}
+  .about-stats{display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-top:36px;}
+  .stat{border-top:1px solid var(--line-strong); padding-top:14px;}
+  .stat b{display:block; font-family:var(--display); font-size:26px; color:var(--ink);}
+  .stat span{font-family:var(--mono); font-size:12px; color:var(--ink-faint); letter-spacing:0.4px;}
+
+  /* ---------- FAQ ---------- */
+  .faq-list{max-width:760px;}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-item summary{
+    list-style:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:24px 0; font-family:var(--display); font-weight:600; font-size:16.5px; color:#eef1f9;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-plus{
+    width:22px; height:22px; flex-shrink:0; position:relative;
+  }
+  .faq-plus::before, .faq-plus::after{
+    content:''; position:absolute; background:var(--accent-2); border-radius:2px;
+  }
+  .faq-plus::before{width:14px; height:2px; top:10px; left:4px;}
+  .faq-plus::after{width:2px; height:14px; top:4px; left:10px; transition:transform 0.2s ease;}
+  .faq-item[open] .faq-plus::after{transform:rotate(90deg);}
+  .faq-item p{padding-bottom:24px; margin-top:-8px; color:var(--ink-dim); font-size:14.5px; max-width:600px; line-height:1.7;}
+
+  /* ---------- CTA BAND ---------- */
+  .cta-band{
+    border:1px solid var(--line-strong); border-radius:20px;
+    padding:64px 56px; text-align:center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(63,125,255,0.10), transparent 70%), var(--panel);
+  }
+  .cta-band h2{font-family:var(--display); font-size:clamp(26px,3vw,36px); font-weight:700; color:#f4f6fb; margin-bottom:16px;}
+  .cta-band p{color:var(--ink-dim); font-size:15.5px; margin-bottom:32px;}
+  .cta-band-btns{display:flex; justify-content:center; gap:14px; flex-wrap:wrap;}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--line); padding:56px 0 32px;}
+  .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; margin-bottom:48px;}
+  .foot-brand p{color:var(--ink-faint); font-size:13.5px; margin-top:14px; max-width:260px; line-height:1.6;}
+  .foot-col h4{font-family:var(--mono); font-size:12px; letter-spacing:0.8px; text-transform:uppercase; color:var(--ink-faint); margin-bottom:16px;}
+  .foot-col a{display:block; color:var(--ink-dim); font-size:14px; margin-bottom:11px; transition:color 0.2s ease;}
+  .foot-col a:hover{color:var(--ink);}
+  .foot-bottom{
+    display:flex; justify-content:space-between; align-items:center;
+    padding-top:28px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:12px; color:var(--ink-faint);
+    flex-wrap:wrap; gap:12px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:920px){
+    .nav-links{display:none;}
+    .nav-toggle{display:block;}
+    .hero-grid{grid-template-columns:1fr;}
+    .hero{padding:150px 0 70px;}
+    .services-grid{grid-template-columns:1fr;}
+    .about{grid-template-columns:1fr; gap:40px;}
+    .method-item{grid-template-columns:60px 1fr; gap:20px;}
+    .foot-grid{grid-template-columns:1fr 1fr; gap:32px;}
+    .cta-band{padding:48px 26px;}
+  }
+  @media (max-width:560px){
+    .wrap{padding:0 20px;}
+    .foot-grid{grid-template-columns:1fr;}
+    .foot-bottom{flex-direction:column; align-items:flex-start;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .radar{animation:none;}
+    .feed-live .dot{animation:none;}
+    .feed-line{animation:none; opacity:1;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner wrap" style="padding-left:18px; padding-right:14px; max-width:1180px;">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M12 2l8 3.5v6c0 5-3.4 8.7-8 10.5-4.6-1.8-8-5.5-8-10.5v-6L12 2z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span>TOP10<span class="brand-sec">SEC</span></span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#servicos">Serviços</a></li>
+      <li><a href="#metodo">Método</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#faq">F.A.Q</a></li>
+    </ul>
+    <a href="#contato" class="nav-cta">Falar com a Top10 →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="radar-rings" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="radar" aria-hidden="true"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><span class="eyebrow-dot"></span>CONSULTORIA & DEFESA DIGITAL</span>
+      <h1>Segurança que não
+        <span class="accent-line">descansa enquanto sua empresa opera.</span>
+      </h1>
+      <p class="lead">A Top10 Security estrutura, monitora e defende o ambiente digital de empresas que não podem se dar ao luxo de serem surpreendidas. Consultoria, SOC e resposta a incidentes em um único parceiro.</p>
+      <div class="hero-ctas">
+        <a href="#contato" class="btn btn-primary">Solicitar diagnóstico gratuito →</a>
+        <a href="#metodo" class="btn btn-ghost">Ver como trabalhamos ↓</a>
+      </div>
+    </div>
+
+    <div class="feed-panel">
+      <div class="feed-head">
+        <div class="feed-head-left">
+          <div class="feed-dots"><span></span><span></span><span></span></div>
+          <span class="feed-title">monitor@top10sec — feed de eventos</span>
+        </div>
+        <span class="feed-live"><span class="dot"></span>AO VIVO</span>
+      </div>
+      <div class="feed-body" id="feedBody"></div>
+      <div class="feed-foot">
+        <span>247 ativos monitorados</span>
+        <span>latência média 340ms</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- SERVICES -->
+<section id="servicos" class="section-pad">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-tag">// Serviços</span>
+      <h2>Cobertura completa, do diagnóstico à resposta.</h2>
+      <p>Cada frente foi desenhada pra funcionar sozinha ou em conjunto, conforme a maturidade de segurança da sua empresa.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 3.5v6c0 5-3.4 8.7-8 10.5-4.6-1.8-8-5.5-8-10.5v-6L12 2z"/></svg></div>
+        <h3>Consultoria em Segurança</h3>
+        <p>Diagnóstico de maturidade, políticas de segurança e plano diretor alinhado ao apetite de risco do negócio.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></div>
+        <h3>SOC & Detecção 24/7</h3>
+        <p>Monitoramento contínuo de logs, tráfego e endpoints, com triagem por analistas antes de qualquer escalonamento.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M4 12h5l1.5-6L14 18l1.5-6H20" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Resposta a Incidentes</h3>
+        <p>Contenção, erradicação e recuperação com playbooks testados, mais relatório pós-incidente para reduzir recorrência.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Pentest & Red Team</h3>
+        <p>Simulações ofensivas controladas em redes, aplicações e engenharia social, com plano de correção priorizado.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg></div>
+        <h3>Conformidade & Governança</h3>
+        <p>Adequação a LGPD, ISO 27001 e frameworks setoriais, com documentação e evidências prontas para auditoria.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M7 18a4 4 0 010-8 5 5 0 019.6-1.5A4 4 0 0117 18H7z"/></svg></div>
+        <h3>Segurança em Nuvem</h3>
+        <p>Hardening e monitoramento de ambientes AWS e Azure, com resposta automatizada a configurações fora do padrão.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHOD -->
+<section id="metodo" class="section-pad">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-tag">// Método</span>
+      <h2>Um processo, não um projeto pontual.</h2>
+      <p>A segurança se sustenta em ciclos. Por isso o trabalho segue sempre esta sequência, revisitada periodicamente.</p>
+    </div>
+    <div class="method-list">
+      <div class="method-item">
+        <div class="method-num">ETAPA 01</div>
+        <div class="method-content"><h3>Diagnóstico</h3><p>Mapeamento de ativos, superfícies de ataque e maturidade atual do ambiente — sem esse retrato, qualquer plano é achismo.</p></div>
+      </div>
+      <div class="method-item">
+        <div class="method-num">ETAPA 02</div>
+        <div class="method-content"><h3>Arquitetura de defesa</h3><p>Definição de controles, segmentação e políticas priorizadas pelo risco real ao negócio, não por checklist genérico.</p></div>
+      </div>
+      <div class="method-item">
+        <div class="method-num">ETAPA 03</div>
+        <div class="method-content"><h3>Implementação</h3><p>Colocamos os controles em produção junto com o seu time, com o mínimo de fricção na operação.</p></div>
+      </div>
+      <div class="method-item">
+        <div class="method-num">ETAPA 04</div>
+        <div class="method-content"><h3>Monitoramento contínuo</h3><p>SOC ativo observando o ambiente em tempo real, cruzando eventos com técnicas conhecidas de ataque.</p></div>
+      </div>
+      <div class="method-item">
+        <div class="method-num">ETAPA 05</div>
+        <div class="method-content"><h3>Resposta & melhoria</h3><p>Quando algo acontece, agimos — e todo incidente vira aprendizado incorporado ao próximo ciclo.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="sobre" class="section-pad">
+  <div class="wrap about">
+    <div>
+      <span class="section-tag">// Sobre a Top10</span>
+      <p class="about-lead">Fundada por profissionais que já estiveram <em>do outro lado</em> — respondendo a incidentes que poderiam ter sido evitados.</p>
+    </div>
+    <div class="about-details">
+      <p>A Top10 Security nasceu da constatação de que segurança digital costuma ser tratada como item de última hora — contratada depois que algo já deu errado. Trabalhamos para inverter essa lógica: colocar defesa e monitoramento antes do incidente, não depois.</p>
+      <p>Atendemos empresas que precisam de um parceiro técnico e direto, sem relatórios genéricos ou promessas vagas. Cada entrega é mensurável: o que foi encontrado, o que foi corrigido, o que está sendo monitorado.</p>
+      <div class="about-stats">
+        <div class="stat"><b>24/7</b><span>MONITORAMENTO ATIVO</span></div>
+        <div class="stat"><b>&lt; 15min</b><span>TEMPO MÉDIO DE TRIAGEM</span></div>
+        <div class="stat"><b>MITRE</b><span>ATT&CK COMO REFERÊNCIA</span></div>
+        <div class="stat"><b>LGPD</b><span>E ISO 27001 ALINHADOS</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section-pad">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-tag">// F.A.Q</span>
+      <h2>Perguntas frequentes</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item" open>
+        <summary>Preciso já ter uma equipe de TI para contratar a Top10?<span class="faq-plus"></span></summary>
+        <p>Não. Atendemos tanto empresas sem estrutura de segurança formal quanto times de TI que precisam de reforço especializado em detecção e resposta.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Como funciona o diagnóstico inicial?<span class="faq-plus"></span></summary>
+        <p>Mapeamos ativos expostos, configurações de risco e histórico de eventos disponível. O resultado é um relatório priorizado, sem custo, antes de qualquer proposta.</p>
+      </details>
+      <details class="faq-item">
+        <summary>O monitoramento é feito por pessoas ou só por automação?</summary>
+        <p>Os dois. Automação faz a triagem inicial de eventos; analistas humanos validam antes de qualquer alerta crítico chegar até você.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Vocês atendem ambientes em nuvem?</summary>
+        <p>Sim, com foco em AWS e Azure — desde hardening de configuração até monitoramento de atividade anômala em tempo real.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Qual o prazo para começar o monitoramento?</summary>
+        <p>Após o diagnóstico, o ambiente de monitoramento costuma entrar em operação entre 1 e 3 semanas, a depender da complexidade da infraestrutura.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-pad" id="contato" style="padding-top:0;">
+  <div class="wrap">
+    <div class="cta-band">
+      <h2>Vamos mapear os riscos do seu ambiente?</h2>
+      <p>Diagnóstico inicial sem custo, sem enrolação técnica desnecessária.</p>
+      <div class="cta-band-btns">
+        <a href="#" class="btn btn-primary">Solicitar diagnóstico →</a>
+        <a href="#" class="btn btn-ghost">Falar com um especialista</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M12 2l8 3.5v6c0 5-3.4 8.7-8 10.5-4.6-1.8-8-5.5-8-10.5v-6L12 2z"/></svg>
+          </span>
+          <span>TOP10<span class="brand-sec">SEC</span></span>
+        </div>
+        <p>Consultoria, monitoramento e resposta a incidentes para empresas que levam segurança digital a sério.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Navegação</h4>
+        <a href="#servicos">Serviços</a>
+        <a href="#metodo">Método</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#faq">F.A.Q</a>
+      </div>
+      <div class="foot-col">
+        <h4>Serviços</h4>
+        <a href="#servicos">SOC 24/7</a>
+        <a href="#servicos">Pentest & Red Team</a>
+        <a href="#servicos">Resposta a incidentes</a>
+        <a href="#servicos">Segurança em nuvem</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contato</h4>
+        <a href="mailto:contato@top10security.com.br">contato@top10security.com.br</a>
+        <a href="#">+55 (11) 4000-1010</a>
+        <a href="#">São Paulo, SP</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Top10 Security. Todos os direitos reservados.</span>
+      <span>Projeto desenvolvido para fins de portfólio.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle (simple, extends nav-links visibility)
+  document.addEventListener('DOMContentLoaded', function(){
+
+    // --- Live threat feed simulation ---
+    const feedBody = document.getElementById('feedBody');
+    const events = [
+      { msg: 'Tentativa de login bloqueada — origem 187.62.x.x', tag: 'media' },
+      { msg: 'Assinatura MITRE T1110 (Brute Force) identificada', tag: 'alta' },
+      { msg: 'Verificação de integridade concluída sem alterações', tag: 'baixa' },
+      { msg: 'Tráfego incomum de saída detectado — host WKS-14', tag: 'media' },
+      { msg: 'Regra de firewall aplicada automaticamente', tag: 'baixa' },
+      { msg: 'Varredura de portas identificada e bloqueada', tag: 'alta' },
+      { msg: 'Certificado TLS renovado com sucesso', tag: 'baixa' },
+      { msg: 'Processo suspeito encerrado em endpoint SRV-02', tag: 'alta' },
+      { msg: 'Backup diário validado e íntegro', tag: 'baixa' },
+      { msg: 'Anomalia de acesso fora do horário padrão', tag: 'media' },
+      { msg: 'Atualização de assinatura de ameaças concluída', tag: 'baixa' },
+      { msg: 'Movimentação lateral suspeita contida', tag: 'alta' }
+    ];
+    const tagLabel = { baixa: 'BAIXA', media: 'MÉDIA', alta: 'ALTA' };
+
+    function pad(n){ return n.toString().padStart(2,'0'); }
+    function timeNow(){
+      const d = new Date();
+      return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+    }
+
+    function addLine(){
+      const ev = events[Math.floor(Math.random() * events.length)];
+      const line = document.createElement('div');
+      line.className = 'feed-line';
+      line.innerHTML =
+        '<span class="feed-time">' + timeNow() + '</span>' +
+        '<span class="feed-msg">' + ev.msg + '</span>' +
+        '<span class="feed-tag tag-' + ev.tag + '">' + tagLabel[ev.tag] + '</span>';
+      feedBody.appendChild(line);
+      feedBody.scrollTop = feedBody.scrollHeight;
+      while(feedBody.children.length > 9){
+        feedBody.removeChild(feedBody.firstChild);
+      }
+    }
+
+    for(let i=0;i<6;i++){ addLine(); }
+    setInterval(addLine, 2400);
+  });
+</script>
+
+</body>
+</html>
